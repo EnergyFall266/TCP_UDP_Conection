@@ -6,25 +6,26 @@ HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 PACKET_SIZE = 512
 
-def servidorUDP(host, port, packetSize):
+def servidorUDPControle(host, port, packetSize):
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.bind((host, port))
         s.setblocking(0)
         data_received = 0
-        # print(f"Connected by {addr}")
-
         #espera pelo primeiro pacote para começar a contar
         tempo_inicial = 0
+        id_pacote = 0
+        print("Waiting for client to connect...")
+        
         while(True):
-            print("Waiting for client to connect...")
             ready = select.select([s], [], [], 2)
             if(ready[0]):
                 print("Listeing for first packet")
-                data = s.recv(packetSize)
+                data = s.recvfrom(packetSize) #USAR RCVFROM pra conseguir o ip do cliente e mandar ack
                 print("First decoy packet arrived")
+                clientAddrPort = data[1]
                 tempo_inicial = time.time()
+                s.sendto(b"ACK1",clientAddrPort)
                 break
-
         #lê os dados enquento eles sao enviados
         while True:
             ready = select.select([s], [], [], 2)
@@ -32,13 +33,12 @@ def servidorUDP(host, port, packetSize):
                 # print("Received packet")
                 data = s.recv(packetSize)
                 data_received += len(data)
+                # DEVOLVE UM ACK com sendto
+                s.sendto(b"ACK1", clientAddrPort)
                 #print(f"Received {data_received}")
             else:
-                tempo_final = time.time() - tempo_inicial
-                #print(f"Total: {data_received}")
+                # DEVOLVE UM NACK com sendto
+                s.sendto(b"ACK0", clientAddrPort)
                 break
-        print(f'All data received.\nReceived {data_received} bytes in {tempo_final} seconds')
-        return tempo_final
-
-if __name__ == "__main__":
-    servidorUDP(HOST, PORT, PACKET_SIZE)
+        tempo_final = time.time() - tempo_inicial
+        #print(f"Total: {data_received}")

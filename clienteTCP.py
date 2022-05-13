@@ -2,8 +2,8 @@ import socket
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
-#FILE_LEN_BYTES = 104857600
-FILE_LEN_BYTES = 1000
+FILE_LEN_BYTES = 104857600
+# FILE_LEN_BYTES = 1000
 PACKET_SIZE = 500
 
 def clienteTCP(host, port, packetSize, file_len):
