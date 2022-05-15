@@ -14,14 +14,14 @@ def servidorUDPControle(host, port, packetSize):
         #espera pelo primeiro pacote para começar a contar
         tempo_inicial = 0
         id_pacote = 0
-        print("Waiting for client to connect...")
+        # print("Waiting for client to connect...")
         
         while(True):
             ready = select.select([s], [], [], 2)
             if(ready[0]):
-                print("Listeing for first packet")
+                # print("Listeing for first packet")
                 data = s.recvfrom(packetSize) #USAR RCVFROM pra conseguir o ip do cliente e mandar ack
-                print("First decoy packet arrived")
+                # print("First decoy packet arrived")
                 clientAddrPort = data[1]
                 tempo_inicial = time.time()
                 s.sendto(b"ACK1",clientAddrPort)
@@ -32,6 +32,9 @@ def servidorUDPControle(host, port, packetSize):
             if(ready[0]):
                 # print("Received packet")
                 data = s.recv(packetSize)
+                
+                if data == b"encerrou":
+                    break
                 data_received += len(data)
                 # DEVOLVE UM ACK com sendto
                 s.sendto(b"ACK1", clientAddrPort)
@@ -39,6 +42,12 @@ def servidorUDPControle(host, port, packetSize):
             else:
                 # DEVOLVE UM NACK com sendto
                 s.sendto(b"ACK0", clientAddrPort)
-                break
+                print("ACK0\n")
+
         tempo_final = time.time() - tempo_inicial
-        #print(f"Total: {data_received}")
+        # print(f'All data received. Received {data_received} bytes')
+        
+        return tempo_final
+
+if __name__ == "__main__":
+    print(servidorUDPControle(HOST, PORT, PACKET_SIZE))

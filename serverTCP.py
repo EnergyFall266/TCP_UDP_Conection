@@ -11,11 +11,10 @@ def servidorTCP(host, port, packetSize):
         s.listen()
         conn, addr = s.accept() #Só avança a linha quando a conexao é estabelecida
         data_received = 0
-        print(f"Connected by {addr}")
+        # print(f"Connected by {addr}")
 
         #espera pelo primeiro pacote para começar a contar
         tempo_inicial = 0
-        print("Started counting")
         tempo_inicial = time.time()
 
         #lê os dados enquento eles sao enviados
@@ -27,7 +26,7 @@ def servidorTCP(host, port, packetSize):
                 tempo_final = time.time() - tempo_inicial
                 break
             #print(f'Server sent: {conn.send(data)} bytes')
-        print(f'All data received.\nReceived {data_received} bytes in {tempo_final} seconds')
+        # print(f'All data received. Received {data_received} bytes ')
         return tempo_final
 
 if __name__ == "__main__":

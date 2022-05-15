@@ -6,7 +6,7 @@ FILE_LEN_BYTES = 104857600
 # FILE_LEN_BYTES = 1000
 PACKET_SIZE = 500
 
-def clienteTCP(host, port, packetSize, file_len):
+def clienteTCP(host, port, packetSize, file_len = FILE_LEN_BYTES):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
         data_sent = 0
@@ -18,7 +18,7 @@ def clienteTCP(host, port, packetSize, file_len):
             else:
                 s.send(b"-"*packetSize)
             data_sent += packetSize
-    print("All data sent")
+    # print(f"All {data_sent} bytes of data sent")
 
 if __name__ == "__main__":
     clienteTCP(HOST, PORT, PACKET_SIZE, FILE_LEN_BYTES)

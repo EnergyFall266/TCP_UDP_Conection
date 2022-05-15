@@ -15,16 +15,16 @@ def servidorUDP(host, port, packetSize):
 
         #espera pelo primeiro pacote para começar a contar
         tempo_inicial = 0
+        # print("Waiting for client to connect...")
         while(True):
-            print("Waiting for client to connect...")
             ready = select.select([s], [], [], 2)
             if(ready[0]):
-                print("Listeing for first packet")
+                # print("Listeing for first packet")
                 data = s.recv(packetSize)
-                print("First decoy packet arrived")
-                tempo_inicial = time.time()
+                # print("First decoy packet arrived")
+                
                 break
-
+        tempo_inicial = time.time()
         #lê os dados enquento eles sao enviados
         while True:
             ready = select.select([s], [], [], 2)
@@ -37,7 +37,7 @@ def servidorUDP(host, port, packetSize):
                 tempo_final = time.time() - tempo_inicial
                 #print(f"Total: {data_received}")
                 break
-        print(f'All data received.\nReceived {data_received} bytes in {tempo_final} seconds')
+        # print(f'All data received. Received {data_received} bytes')
         return tempo_final
 
 if __name__ == "__main__":
