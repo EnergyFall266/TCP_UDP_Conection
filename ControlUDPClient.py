@@ -11,6 +11,7 @@ PACKET_SIZE = 512
 def clienteUDPControle(host, port, packetSize, file_len = FILE_LEN_BYTES):
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         data_sent = 0
+        blocos_gerados = 0
         server_addrPort = (host, port)
         id_pacote = 0
         
@@ -34,6 +35,7 @@ def clienteUDPControle(host, port, packetSize, file_len = FILE_LEN_BYTES):
                         else: id_pacote += 1
                         s.sendto((id_pacote).to_bytes(1, byteorder='big')+b"-"*(file_len-data_sent-1), server_addrPort)
                         data_sent += file_len-data_sent
+                        blocos_gerados +=1
                         if data_sent == file_len:
                             s.sendto(b"encerrou", server_addrPort)
                 else:
@@ -54,15 +56,14 @@ def clienteUDPControle(host, port, packetSize, file_len = FILE_LEN_BYTES):
                         else: id_pacote += 1
                         s.sendto((id_pacote).to_bytes(1, byteorder='big')+b"-"*(packetSize-1), server_addrPort)
                         data_sent += packetSize
+                        blocos_gerados +=1
                         if data_sent == file_len:
                             s.sendto(b"encerrou", server_addrPort)
                 else:
                     #nao recebeu ACK, reenvia pacote
                     s.sendto((id_pacote).to_bytes(1, byteorder='big')+b"-"*(packetSize-1), server_addrPort)
                     print("Reenviando.....")
-
-    # print(f"All {data_sent} bytes of data sent")
-    
-
+    # print(f"All {data_sent} bytes of data sent. Blocos gerados: {blocos_gerados}")    
+    return data_sent, blocos_gerados
 if __name__ == "__main__":
     clienteUDPControle(HOST, PORT, PACKET_SIZE, FILE_LEN_BYTES)
