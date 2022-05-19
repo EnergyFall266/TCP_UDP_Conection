@@ -11,6 +11,7 @@ def servidorUDPControle(host, port, packetSize):
         s.bind((host, port))
         s.setblocking(0)
         data_received = 0
+        blocos_recebidos = 0
         #espera pelo primeiro pacote para começar a contar
         tempo_inicial = 0
         id_pacote = 0
@@ -38,6 +39,7 @@ def servidorUDPControle(host, port, packetSize):
                 data_received += len(data)
                 # DEVOLVE UM ACK com sendto
                 s.sendto(b"ACK1", clientAddrPort)
+                blocos_recebidos += 1
                 #print(f"Received {data_received}")
             else:
                 # DEVOLVE UM NACK com sendto
@@ -47,7 +49,7 @@ def servidorUDPControle(host, port, packetSize):
         tempo_final = time.time() - tempo_inicial
         # print(f'All data received. Received {data_received} bytes')
         
-        return tempo_final
+        return tempo_final, data_received, blocos_recebidos
 
 if __name__ == "__main__":
     print(servidorUDPControle(HOST, PORT, PACKET_SIZE))
